@@ -32,23 +32,23 @@ public class Jogo {
      * Cria todos os ambientes e liga as saidas deles
      */
     private void criarAmbientes() {
-        Ambiente reitoria, pavilhao, cantina, departamento, laboratorio;
+        Ambiente Salao, biblioteca, torre, jardins, masmorras;
       
         // cria os ambientes
-        reitoria = new Ambiente("em um espaço aberto, gramado, em frente à reitoria");
-        pavilhao = new Ambiente("no pavilhao de aulas");
-        cantina = new Ambiente("na cantina da universidade");
-        departamento = new Ambiente("no departamento de computacao");
-        laboratorio = new Ambiente("na laboratorio de aulas de programacao");
+        Salao = new Ambiente("em um grande salão abandonado, resquicio do que um dia foi a gloriosa tavola redonda");
+        biblioteca = new Ambiente("em uma biblioteca escura, o odor envelhecido dos livros e traças impregna suas narinas");
+        torre = new Ambiente("na antiga torre do relogio, as engrenagens enferrujadas ecoam o tempo perdido. Sombras dançantes testemunham seu inexorável tic-tac.");
+        jardins = new Ambiente("nos antigos jardins do castelo, flores murchas sussurram segredos mortais entre vegetação retorcida. A aura de decadência domina a paisagem.");
+        masmorras = new Ambiente("nas masmorras, os corredores sombrios ressoam gemidos antigos. Correntes enferrujadas seguram memórias de tormento.");
         
         // inicializa as saidas dos ambientes
-        reitoria.ajustarSaidas(null, pavilhao, departamento, cantina);
-        pavilhao.ajustarSaidas(null, null, null, reitoria);
-        cantina.ajustarSaidas(null, reitoria, null, null);
-        departamento.ajustarSaidas(reitoria, laboratorio, null, null);
-        laboratorio.ajustarSaidas(null, null, null, departamento);
+        Salao.ajustarSaidas(null, biblioteca, jardins, torre);
+        biblioteca.ajustarSaidas(null, null, null, Salao);
+        torre.ajustarSaidas(null, Salao, null, null);
+        jardins.ajustarSaidas(Salao, masmorras, null, null);
+        masmorras.ajustarSaidas(null, null, null, jardins);
 
-        ambienteAtual = reitoria;  // o jogo comeca em frente à reitoria
+        ambienteAtual = Salao;  // o jogo comeca em frente ao Salao
     }
 
     /**
@@ -61,7 +61,7 @@ public class Jogo {
         // os executamos até o jogo terminar.
                 
         boolean terminado = false;
-        while (! terminado) {
+        while (! terminado) {   
             Comando comando = analisador.pegarComando();
             terminado = processarComando(comando);
         }
@@ -73,12 +73,13 @@ public class Jogo {
      */
     private void imprimirBoasVindas() {
         System.out.println();
-        System.out.println("Bem-vindo ao World of Zuul!");
-        System.out.println("World of Zuul eh um novo jogo de aventura, incrivelmente chato.");
+        System.out.println("Bem-vindo ao Legends of Camelot!");
+        System.out.println("Legends of Camelot eh um novo jogo de aventura.");
+        System.out.println("Seu objetivo eh recuperar a espada perdida do rei Arthur");
         System.out.println("Digite 'ajuda' se voce precisar de ajuda.");
         System.out.println();
         
-        System.out.println("Voce esta " + ambienteAtual.getDescricao());
+        getAmbienteAtual();
     
         System.out.print("Saidas: ");
         if(ambienteAtual.saidaNorte != null) {
@@ -123,16 +124,22 @@ public class Jogo {
         return querSair;
     }
 
+    private void getAmbienteAtual()
+    {
+        System.out.println("Voce esta " + ambienteAtual.getDescricao());
+    }
+
     /**
      * Exibe informações de ajuda.
      * Aqui nós imprimimos algo bobo e enigmático e a lista de  palavras de comando
      */
     private void imprimirAjuda()  {
-        System.out.println("Voce esta perdido. Voce esta sozinho. Voce caminha");
-        System.out.println("pela universidade.");
-        System.out.println();
+        System.out.println("Você caminha pelo castelo abandonado, um sentimento de opressão se intensifica com cada passo que dá.");
+        System.out.println("O ar úmido e impregnado de mofo parece sufocante, e o silêncio pesado é interrompido apenas pelo eco de seus próprios passos.");
+        System.out.println("As sombras dançam nas paredes desgastadas e rachadas, dando vida a ilusões de movimento.");
+        System.out.println("\n\n");
         System.out.println("Suas palavras de comando sao:");
-        System.out.println("   ir sair ajuda");
+        System.out.println("\nir\n sair\n ajuda\n");
     }
 
     /** 
@@ -169,7 +176,7 @@ public class Jogo {
         else {
             ambienteAtual = proximoAmbiente;
             
-            System.out.println("Voce esta " + ambienteAtual.getDescricao());
+            getAmbienteAtual();
             
             System.out.print("Saidas: ");
             if(ambienteAtual.saidaNorte != null) {
