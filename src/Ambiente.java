@@ -1,3 +1,5 @@
+import java.util.HashMap;
+
 /**
  * Classe Ambiente - um ambiente em um jogo adventure.
  *
@@ -13,12 +15,10 @@
  */
 public class Ambiente  {
     // descrição do ambiente
-    public String descricao;
+    private String descricao;
+    private String descricaoCompleta;
     // ambientes vizinhos de acordo com a direção
-    public Ambiente saidaNorte;
-    public Ambiente saidaSul;
-    public Ambiente saidaLeste;
-    public Ambiente saidaOeste;
+    private HashMap<String, Ambiente> saidas;
 
     /**
      * Cria um ambiente com a "descricao" passada. Inicialmente, ele não tem saidas. 
@@ -27,6 +27,8 @@ public class Ambiente  {
      */
     public Ambiente(String descricao)  {
         this.descricao = descricao;
+        this.descricaoCompleta="";
+        this.saidas= new HashMap<String, Ambiente>();
     }
 
     /**
@@ -37,22 +39,39 @@ public class Ambiente  {
      * @param sul A saída sul.
      * @param oeste A saída oeste.
      */
-    public void ajustarSaidas(Ambiente norte, Ambiente leste, Ambiente sul, Ambiente oeste)  {
-        if(norte != null)
-            saidaNorte = norte;
-        if(leste != null)
-            saidaLeste = leste;
-        if(sul != null)
-            saidaSul = sul;
-        if(oeste != null)
-            saidaOeste = oeste;
+    public void ajustarSaida(String dir, Ambiente ambiente)  {
+        this.saidas.put(dir, ambiente);
     }
+    
+    public Ambiente getSaida(String dir) {
+        return saidas.get(dir);
+    }
+
+    public String direcoesDeSaida() {    	
+    	String textoSaidas = "";
+    	for (String direcao : saidas.keySet()) {
+    		if(saidas.get(direcao)!=null)
+                textoSaidas = textoSaidas + "\n"+direcao;  
+    	}        
+	return textoSaidas;
+}
+
 
     /**
      * @return A descrição do ambiente.
      */
     public String getDescricao() {
         return descricao;
+    }
+
+
+    public String getDescricaoCompleta()
+    {
+        return getDescricao() + descricaoCompleta;
+    }
+
+    public void setDescricaoCompleta(String descricaoCompleta) {
+        this.descricaoCompleta = descricaoCompleta;
     }
 
 }

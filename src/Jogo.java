@@ -28,26 +28,32 @@ public class Jogo {
         analisador = new Analisador();
     }
 
+    private void ajustarSaidas(Ambiente ambiente, String[] saidas, Ambiente[] ambientes) {
+        for (int i = 0; i < saidas.length; i++) {
+            ambiente.ajustarSaida(saidas[i], ambientes[i]);
+        }
+    }
+
     /**
      * Cria todos os ambientes e liga as saidas deles
      */
     private void criarAmbientes() {
         Ambiente Salao, biblioteca, torre, jardins, masmorras;
-      
+        String[] saidas={"norte", "leste", "sul", "oeste"};
         // cria os ambientes
         Salao = new Ambiente("em um grande salão abandonado, resquicio do que um dia foi a gloriosa tavola redonda");
         biblioteca = new Ambiente("em uma biblioteca escura, o odor envelhecido dos livros e traças impregna suas narinas");
         torre = new Ambiente("na antiga torre do relogio, as engrenagens enferrujadas ecoam o tempo perdido. Sombras dançantes testemunham seu inexorável tic-tac.");
         jardins = new Ambiente("nos antigos jardins do castelo, flores murchas sussurram segredos mortais entre vegetação retorcida. A aura de decadência domina a paisagem.");
         masmorras = new Ambiente("nas masmorras, os corredores sombrios ressoam gemidos antigos. Correntes enferrujadas seguram memórias de tormento.");
-        
-        // inicializa as saidas dos ambientes
-        Salao.ajustarSaidas(null, biblioteca, jardins, torre);
-        biblioteca.ajustarSaidas(null, null, null, Salao);
-        torre.ajustarSaidas(null, Salao, null, null);
-        jardins.ajustarSaidas(Salao, masmorras, null, null);
-        masmorras.ajustarSaidas(null, null, null, jardins);
 
+        // inicializa as saidas dos ambientes
+        ajustarSaidas(Salao, saidas, new Ambiente[]{null, biblioteca, jardins, torre});
+        ajustarSaidas(biblioteca, saidas, new Ambiente[]{null, null, null, Salao});
+        ajustarSaidas(torre, saidas, new Ambiente[]{null, Salao, null, null});
+        ajustarSaidas(jardins, saidas, new Ambiente[]{Salao, masmorras, null, null});
+        ajustarSaidas(masmorras, saidas, new Ambiente[]{null, null, null, jardins});
+        
         ambienteAtual = Salao;  // o jogo comeca em frente ao Salao
     }
 
@@ -82,18 +88,7 @@ public class Jogo {
         getAmbienteAtual();
     
         System.out.print("Saidas: ");
-        if(ambienteAtual.saidaNorte != null) {
-            System.out.print("norte ");
-        }
-        if(ambienteAtual.saidaLeste != null) {
-            System.out.print("leste ");
-        }
-        if(ambienteAtual.saidaSul != null) {
-            System.out.print("sul ");
-        }
-        if(ambienteAtual.saidaOeste != null) {
-            System.out.print("oeste ");
-        }
+        System.out.println(ambienteAtual.direcoesDeSaida());
         System.out.println();
     }
 
@@ -117,6 +112,10 @@ public class Jogo {
         else if (palavraDeComando.equals("ir")) {
             irParaAmbiente(comando);
         }
+        else if(palavraDeComando.equals("observar"))
+        {
+            observar();
+        }
         else if (palavraDeComando.equals("sair")) {
             querSair = sair(comando);
         }
@@ -139,7 +138,7 @@ public class Jogo {
         System.out.println("As sombras dançam nas paredes desgastadas e rachadas, dando vida a ilusões de movimento.");
         System.out.println("\n\n");
         System.out.println("Suas palavras de comando sao:");
-        System.out.println("\nir\n sair\n ajuda\n");
+        System.out.println(analisador.getComandos());
     }
 
     /** 
@@ -157,42 +156,32 @@ public class Jogo {
 
         // Tenta sair do ambiente atual
         Ambiente proximoAmbiente = null;
-        if(direcao.equals("norte")) {
-            proximoAmbiente = ambienteAtual.saidaNorte;
-        }
-        if(direcao.equals("leste")) {
-            proximoAmbiente = ambienteAtual.saidaLeste;
-        }
-        if(direcao.equals("sul")) {
-            proximoAmbiente = ambienteAtual.saidaSul;
-        }
-        if(direcao.equals("oeste")) {
-            proximoAmbiente = ambienteAtual.saidaOeste;
-        }
-
-        if (proximoAmbiente == null) {
+        try
+        {
+            proximoAmbiente=ambienteAtual.getSaida(direcao);
+            if (proximoAmbiente == null) {
+                System.out.println("Nao ha passagem!");
+            }
+            else {
+                ambienteAtual = proximoAmbiente;
+                
+                getAmbienteAtual();
+                
+                System.out.print("Saidas: ");
+                System.out.println(ambienteAtual.direcoesDeSaida());
+                System.out.println();
+            }
+        }catch (Exception e)
+        {
             System.out.println("Nao ha passagem!");
         }
-        else {
-            ambienteAtual = proximoAmbiente;
-            
-            getAmbienteAtual();
-            
-            System.out.print("Saidas: ");
-            if(ambienteAtual.saidaNorte != null) {
-                System.out.print("norte ");
-            }
-            if(ambienteAtual.saidaLeste != null) {
-                System.out.print("leste ");
-            }
-            if(ambienteAtual.saidaSul != null) {
-                System.out.print("sul ");
-            }
-            if(ambienteAtual.saidaOeste != null) {
-                System.out.print("oeste ");
-            }
-            System.out.println();
-        }
+
+        
+    }
+
+    private void observar()
+    {
+        System.out.println("Voce esta "+ ambienteAtual.getDescricaoCompleta());
     }
 
     /** 

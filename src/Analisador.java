@@ -28,6 +28,11 @@ public class Analisador  {
         entrada = new Scanner(System.in);
     }
 
+    public String getComandos()
+    {
+        return palavrasDeComando.getComandosValidos();
+    }
+
     /**
      * @return O próximo comando do usuario
      */

@@ -11,8 +11,16 @@
 public class PalavrasComando {
     // um vetor constante que guarda todas as palavras de comandos válidas
     private static final String[] comandosValidos = {
-        "ir", "sair", "ajuda"
+        "ir", "sair", "ajuda", "observar"
     };
+
+    public String getComandosValidos() {
+        String finalString = "";
+        for (String comando : comandosValidos) {
+            finalString += comando + "\n";
+        }
+        return finalString;
+    }
 
     /**
      * Verifica se uma dada String é uma palavra de comando válida. 
