@@ -17,6 +17,7 @@ public class Ambiente  {
     // descrição do ambiente
     private String descricao;
     private String descricaoCompleta;
+    private Item item;
     // ambientes vizinhos de acordo com a direção
     private HashMap<String, Ambiente> saidas;
 
@@ -29,6 +30,13 @@ public class Ambiente  {
         this.descricao = descricao;
         this.descricaoCompleta="";
         this.saidas= new HashMap<String, Ambiente>();
+        this.item=null;
+    }
+
+    public Ambiente(String descricao, Item item)
+    {
+        this(descricao);
+        this.item = item;
     }
 
     /**
@@ -57,6 +65,23 @@ public class Ambiente  {
 }
 
 
+    public String getNomeItem()
+    {
+        return item.getNome();
+    }
+
+
+    public boolean temItem()
+    {
+        return item!=null;
+    }
+
+    public Item pegarItem(){
+        Item item = this.item;
+        this.item = null;
+        return item;
+    }
+
     /**
      * @return A descrição do ambiente.
      */
@@ -67,7 +92,10 @@ public class Ambiente  {
 
     public String getDescricaoCompleta()
     {
-        return getDescricao() + descricaoCompleta;
+        if(!temItem())
+            return getDescricao() + descricaoCompleta;
+        else
+            return getDescricao() + descricaoCompleta + "\n\n" + "Item: \n" +item.getNome() + ": "+ item.getDescricao();
     }
 
     public void setDescricaoCompleta(String descricaoCompleta) {

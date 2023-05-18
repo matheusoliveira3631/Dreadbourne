@@ -19,13 +19,16 @@ public class Jogo {
     private Analisador analisador;
     // ambiente onde se encontra o jogador
     private Ambiente ambienteAtual;
-        
+    private Jogador jogador;
+    
+
     /**
      * Cria o jogo e incializa seu mapa interno.
      */
     public Jogo()  {
         criarAmbientes();
         analisador = new Analisador();
+        jogador = new Jogador("Arthur");
     }
 
     private void ajustarSaidas(Ambiente ambiente, String[] saidas, Ambiente[] ambientes) {
@@ -39,13 +42,14 @@ public class Jogo {
      */
     private void criarAmbientes() {
         Ambiente Salao, biblioteca, torre, jardins, masmorras;
-        String[] saidas={"norte", "leste", "sul", "oeste"};
+        String[] saidas={"norte", "sul", "leste", "oeste"};
+        Item[] itens=gerarItems();
         // cria os ambientes
         Salao = new Ambiente("em um grande salão abandonado, resquicio do que um dia foi a gloriosa tavola redonda");
         biblioteca = new Ambiente("em uma biblioteca escura, o odor envelhecido dos livros e traças impregna suas narinas");
-        torre = new Ambiente("na antiga torre do relogio, as engrenagens enferrujadas ecoam o tempo perdido. Sombras dançantes testemunham seu inexorável tic-tac.");
+        torre = new Ambiente("na antiga torre do relogio, as engrenagens enferrujadas ecoam o tempo perdido. Sombras dançantes testemunham seu inexorável tic-tac.", itens[1]);
         jardins = new Ambiente("nos antigos jardins do castelo, flores murchas sussurram segredos mortais entre vegetação retorcida. A aura de decadência domina a paisagem.");
-        masmorras = new Ambiente("nas masmorras, os corredores sombrios ressoam gemidos antigos. Correntes enferrujadas seguram memórias de tormento.");
+        masmorras = new Ambiente("nas masmorras, os corredores sombrios ressoam gemidos antigos. Correntes enferrujadas seguram memórias de tormento.", itens[0]);
 
         // inicializa as saidas dos ambientes
         ajustarSaidas(Salao, saidas, new Ambiente[]{null, biblioteca, jardins, torre});
@@ -56,6 +60,16 @@ public class Jogo {
         
         ambienteAtual = Salao;  // o jogo comeca em frente ao Salao
     }
+
+    private Item[] gerarItems()
+    {
+        Item[] itens = new Item[2];
+        itens[0] = new Item("espada", "uma espada enferrujada, mas ainda afiada");
+        itens[1] = new Item("escudo", "um escudo de madeira, com o brasão do rei Arthur");
+        return itens;
+
+    }
+
 
     /**
      *  Rotina principal do jogo. Fica em loop ate terminar o jogo.
@@ -115,6 +129,14 @@ public class Jogo {
         else if(palavraDeComando.equals("observar"))
         {
             observar();
+        }
+        else if(palavraDeComando.equals("pegar"))
+        {
+            pegarItem(comando);
+        }
+        else if(palavraDeComando.equals("inventario"))
+        {
+            inventario();
         }
         else if (palavraDeComando.equals("sair")) {
             querSair = sair(comando);
@@ -182,6 +204,42 @@ public class Jogo {
     private void observar()
     {
         System.out.println("Voce esta "+ ambienteAtual.getDescricaoCompleta());
+    }
+
+    private void pegarItem(Comando comando)
+    {
+        if(!comando.temSegundaPalavra())
+        {
+            System.out.println("Pegar o que?");
+            return;
+        }
+
+        if(!ambienteAtual.temItem())
+        {
+            System.out.println("Nao ha itens para pegar!");
+            return;
+        }
+        else
+        {
+            String item = comando.getSegundaPalavra();
+            if(ambienteAtual.getNomeItem().equals(item))
+            {
+                Item drop = ambienteAtual.pegarItem();
+                jogador.guardaItem(drop);
+                System.out.println("Voce pegou o item: "+ drop.getNome());
+            }else
+            {
+                System.out.println("Sua mente lhe prega peças e voce nao consegue encontrar o item.");
+            }
+            
+        }
+        
+    }
+
+    private void inventario()
+    {
+        System.out.println("Voce tem os seguintes itens:");
+        System.out.println(jogador.inventario());
     }
 
     /** 
